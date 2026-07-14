@@ -21,7 +21,7 @@
   .logobox{display:inline-block;background:#fff;border-radius:9px;padding:8px 14px;margin-bottom:14px;box-shadow:0 2px 8px rgba(0,0,0,.12)}
   .logobox img{height:34px;display:block}
   .brandline .dot{width:7px;height:7px;border-radius:50%;background:#7fb2ec}
-  header.top h1{margin:0;font-size:29.5px;font-weight:800;letter-spacing:-.01em}
+  header.top h1{margin:0;font-size:27px;font-weight:800;letter-spacing:-.01em;line-height:1.3}
   header.top p.sub{margin:7px 0 16px;font-size:16.5px;opacity:.9;max-width:780px}
   .tabs{display:flex;gap:4px}
   .tab{appearance:none;border:0;font-family:inherit;cursor:pointer;font-size:16.5px;font-weight:700;
@@ -168,6 +168,17 @@
   .kwsum{font-size:14.5px;line-height:1.65;color:#37424f;margin:0 0 14px;padding:12px 15px;background:#f7f9fc;border:1px solid #e6ebf2;border-radius:10px}
   .kwsum b{color:var(--navy);font-weight:800}
   .kwmood{font-size:11px;font-weight:700;color:var(--crimson);background:#fbeef0;border-radius:4px;padding:1px 7px;display:block;text-align:center;margin-top:3px;white-space:nowrap}
+  .kwsec{margin-top:18px;padding-top:14px;border-top:1px solid var(--line)}
+  .kwsec-title{font-size:15px;font-weight:800;color:var(--navy);display:flex;align-items:center;gap:8px}
+  .kwsec-cur .kwsec-title{color:var(--crimson)}
+  .kwsec-cur{background:#fdf7f8;border:1px solid #f2dfe3;border-radius:12px;padding:14px 16px;margin-top:16px}
+  .kwsec-badge{font-size:12px;font-weight:800;background:var(--crimson);color:#fff;border-radius:999px;padding:2px 10px}
+  .kwclk{cursor:pointer;border-radius:8px;transition:background .12s}
+  .kwclk:hover{background:rgba(46,120,199,.07)}
+  #repTable td{padding:9px 10px;vertical-align:top}
+  .repEdit{cursor:text;transition:background .12s,box-shadow .12s}
+  .repEdit:hover{background:#f6f9fd}
+  .repEdit:focus{outline:none;background:#fffdf2;box-shadow:inset 0 0 0 2px var(--crimson)}
   .kwrow{display:grid;grid-template-columns:145px 1fr 34px;align-items:center;gap:10px;margin-bottom:10px}
   .kwrow .kwl{display:flex;flex-direction:column;align-items:flex-end;line-height:1.25}
   .kwlname{font-size:14.8px;font-weight:600;color:#3a4452;text-align:right}
@@ -193,17 +204,44 @@
   footer.foot{border-top:1px solid var(--line);margin-top:30px;padding:18px 0 42px;color:var(--muted);font-size:14.2px}
   .hide{display:none}
 
-  @media print{body{background:#fff}.filters,.tabs,.uploadbar{display:none}.imp-inner{display:block!important}.imp-btn{display:none}
+  @media print{
+    @page{size:A4;margin:11mm 10mm}
+    body{background:#fff;font-size:12px}
+    /* 화면 전용 요소 숨김 */
+    .filters,.uploadbar,.tabs button.printbtn-top,#deptLinksBtn,#deptLinksModal,#kwEviModal,
+    .sortbar,#sortbar,.clearbtn,#reportCtrl button,#repCopyBtn{display:none!important}
+    .tabs .tab{pointer-events:none;box-shadow:none}
+    .tabs .tab:not(.active){display:none}
+    .tabs .tab.active{background:var(--navy)!important;color:#fff!important;border-radius:8px;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+    .imp-inner{display:block!important}.imp-btn{display:none}
     .pdfbtn{display:none!important}
-    header.top{background:#1B2A4A!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
-    .card,.kpi{box-shadow:none;break-inside:avoid}
-    header.top{padding:14px 0 0!important}
-    .logobox{margin-bottom:8px!important}
-    header.top h1{font-size:23.6px!important}
-    header.top p.sub{margin-bottom:8px!important}
-    section.block{margin:12px 0!important}
-    .two{break-inside:auto}
-    .kwrow .kwt>i,table.sumtbl td.hl,.grp .gb>i{-webkit-print-color-adjust:exact;print-color-adjust:exact}}
+    /* 헤더 */
+    header.top{background:#1B2A4A!important;-webkit-print-color-adjust:exact;print-color-adjust:exact;padding:12px 0 2px!important}
+    .logobox{margin-bottom:6px!important}
+    header.top h1{font-size:19px!important;margin-bottom:2px!important}
+    #deptTitle{font-size:16px!important;margin-bottom:6px!important}
+    header.top p.sub{margin-bottom:6px!important;font-size:11px!important}
+    #updatedAt{display:none!important}
+    /* 본문 배치: 카드·표·행 잘림 방지 */
+    section.block{margin:10px 0!important}
+    .card,.kpi{box-shadow:none;break-inside:avoid;border:1px solid #e2e5ea}
+    .two{break-inside:auto;display:block!important}
+    .two>.card{margin-bottom:10px}
+    table{page-break-inside:auto;width:100%!important}
+    tr{page-break-inside:avoid}
+    thead{display:table-header-group}
+    .kpis{display:grid!important;grid-template-columns:repeat(4,1fr)!important;gap:8px!important}
+    svg{max-width:100%!important;height:auto!important}
+    /* 색상 보존: 연도색·히트맵·막대·성격분포 */
+    .kwrow .kwt>i,table.sumtbl td.hl,.grp .gb>i,.cellbox,#repTable td,#repTable th,
+    table td[style*="background"],table th[style*="background"],div[style*="background"]
+      {-webkit-print-color-adjust:exact;print-color-adjust:exact}
+    /* 보고서 표 인쇄 최적화 */
+    #repTable{font-size:11px!important}
+    #repTable td,#repTable th{padding:6px 6px!important}
+    .repEdit:focus{box-shadow:none;background:transparent}
+    a{text-decoration:none;color:inherit}
+  }
 </style>
 </head>
 <body>
@@ -211,31 +249,46 @@
   <div class="wrap">
     <div class="logobox"><img src="data:image/png;base64,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" alt="대구보건대학교 직업교육혁신센터"></div>
     <div class="brandline"><span class="dot"></span> 교과목 · 전공교육과정 CQI 환류 시스템 <span id="updatedAt" style="margin-left:10px;font-weight:600;color:#8a93a3"></span></div>
-    <h1><span id="deptName"></span> CQI 대시보드</h1>
-    <p class="sub">교과목 CQI와 전공교육과정 CQI의 주요 개선내용(정성)과 결과(정량)를 살펴봅니다. 점수는 4점 척도의 대략적 분포이며 우열 평가가 아닙니다. 특정 교과목을 선택하면 연도별 추이를 볼 수 있습니다.</p>
+    <h1 style="margin-bottom:4px">교과목 · 전공교육과정 CQI 결과 및 개선내용 환류 대시보드</h1>
+    <div id="deptTitle" style="font-size:24px;font-weight:800;color:#ffd9de;letter-spacing:-.4px;margin:0 0 12px"><span id="deptName"></span> 대시보드</div>
+    <p class="sub">교과목 CQI 분석 결과는 교육과정 개편 시 <b>교과목의 유지 · 폐지 · 변경 · 신설</b>의 객관적 근거자료로, 전공교육과정 CQI 분석 결과는 <b>전공 교육과정 구성</b>의 객관적 근거자료로 활용하여 교육개선에 반영합니다. 점수는 4점 척도의 대략적 분포이며 우열 평가가 아닙니다. 특정 교과목을 선택하면 연도별 추이를 볼 수 있습니다.</p>
     <div class="tabs">
       <button class="tab active" data-tab="course">교과목 CQI</button>
       <button class="tab" data-tab="major">전공교육과정 CQI</button>
       <button class="tab" data-tab="summary">연도별 종합 요약</button>
       <button class="printbtn-top" onclick="window.print()">🖨️ 이 화면 PDF/인쇄</button>
-      <button class="printbtn-top" id="copyLinkBtn" onclick="copyDeptLink()">🔗 이 화면 링크 복사</button>
+      <button class="printbtn-top" id="deptLinksBtn" onclick="toggleDeptLinks()">🏫 학과별 링크</button>
     </div>
   </div>
 </header>
 
-<div class="wrap">
-  <div class="uploadbar">
-    <div class="ub-left">
-      <strong>📥 CQI 엑셀 불러오기</strong>
-      <span class="ub-hint">종합정보시스템 결과·개선내용 파일을 한 번에 선택하면 학과별로 자동 분류됩니다. 같은 학년도·학기·과정·학과를 다시 올리면 그 부분만 갱신됩니다.</span>
+<div id="deptLinksModal" class="hide" style="position:fixed;inset:0;background:rgba(20,24,32,.55);z-index:200;">
+  <div style="max-width:720px;margin:48px auto;background:#fff;border-radius:16px;max-height:80vh;overflow:auto;box-shadow:0 20px 60px rgba(0,0,0,.35)">
+    <div style="position:sticky;top:0;background:#fff;padding:20px 24px 14px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center">
+      <div>
+        <h3 style="margin:0;font-size:19px;color:var(--navy)">학과별 공유 링크</h3>
+        <p class="cap" style="margin:6px 0 0">학과별로 완전히 분리된 파일(다른 학과 정보가 전혀 없는 파일)의 링크입니다. 파이썬 스크립트의 <code>--split-depts</code>로 만든 파일을 <code>depts/</code> 폴더에 업로드해야 아래 링크가 실제로 작동합니다.</p>
+      </div>
+      <button onclick="toggleDeptLinks()" style="border:none;background:#eef1f6;border-radius:8px;padding:6px 12px;cursor:pointer;font-size:14px;font-weight:700;color:#3a4452">닫기 ✕</button>
     </div>
-    <label class="ub-btn"><input type="file" id="fileInput" multiple accept=".xls,.xlsx" hidden>📂 새로 불러오기</label>
-    <label class="ub-btn ghost"><input type="file" id="fileMerge" multiple accept=".xls,.xlsx" hidden>➕ 추가·갱신</label>
-    <button class="ub-btn save" onclick="exportHTML()">💾 이 학과 저장</button>
-    <button class="ub-btn ghost" onclick="exportAll()">📦 전체 학과 일괄저장</button>
-    <span id="loadStatus" class="lstatus"></span>
+    <div id="deptLinksList" style="padding:8px 24px 24px"></div>
   </div>
+</div>
 
+<div id="kwEviModal" class="hide" style="position:fixed;inset:0;background:rgba(20,24,32,.55);z-index:210;">
+  <div style="max-width:760px;margin:42px auto;background:#fff;border-radius:16px;max-height:82vh;overflow:auto;box-shadow:0 20px 60px rgba(0,0,0,.35)">
+    <div style="position:sticky;top:0;background:#fff;padding:18px 24px 12px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:flex-start;gap:12px">
+      <div>
+        <h3 id="kwEviTitle" style="margin:0;font-size:18px;color:var(--navy)"></h3>
+        <p id="kwEviSub" class="cap" style="margin:5px 0 0"></p>
+      </div>
+      <button onclick="closeEviModal()" style="border:none;background:#eef1f6;border-radius:8px;padding:6px 12px;cursor:pointer;font-size:14px;font-weight:700;color:#3a4452;flex:0 0 auto">닫기 ✕</button>
+    </div>
+    <div id="kwEviList" style="padding:6px 24px 22px"></div>
+  </div>
+</div>
+
+<div class="wrap">
   <div class="filters">
     <div class="fgroup grow"><label id="fDeptLabel">학과 선택 (센터용 · ‘전체 학과’ 조회 가능)</label>
       <select class="sel" id="fDept"></select></div>
@@ -312,6 +365,7 @@
     <div id="summaryBody"></div>
   </section>
 
+
   <footer class="foot">
     <div class="wrap" style="padding:0">대구보건대학교 산학협력단 · 직업교육혁신센터 — <span class="deptNameF"></span> CQI 시각화 (업로드 파일 기반) · 점수는 참고용 분포</div>
   </footer>
@@ -362,7 +416,10 @@ function updateHeader(){
 }
 function showUpdatedAt(){
   const el=document.getElementById("updatedAt");
-  if(el && DATA.updatedAt) el.textContent="· 최종 업데이트: "+DATA.updatedAt;
+  if(!el) return;
+  // 관리자용(여러 학과가 담긴 마스터 파일)에서 '전체 학과' 조회 중일 때만 표시
+  const isAdminAll = DATA.depts.length>1 && st.dept==="전체";
+  el.textContent = (isAdminAll && DATA.updatedAt) ? "· 최종 업데이트: "+DATA.updatedAt : "";
 }
 
 // ── URL 해시 ↔ 화면 상태 동기화 (학과별 링크 공유) ──
@@ -406,6 +463,41 @@ function fallbackCopy(text,cb){
 }
 window.copyDeptLink=copyDeptLink;
 
+// ── 학과별 공유 링크 모달 (depts/ 폴더 규칙으로 링크 구성) ──
+function deptLinkURL(dept){
+  const dir = location.pathname.replace(/[^/]*$/, "");           // 현재 파일이 있는 폴더 경로
+  const base = location.origin + dir;                             // https://.../폴더/
+  return base + "depts/" + encodeURIComponent(dept) + ".html";
+}
+function renderDeptLinks(){
+  const list=document.getElementById("deptLinksList");
+  if(!DATA.depts || !DATA.depts.length){ list.innerHTML="<p class='cap'>학과 데이터가 없습니다.</p>"; return; }
+  list.innerHTML = DATA.depts.map((d,i)=>{
+    const url=deptLinkURL(d);
+    return `<div style="display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid #f0f1f4">
+      <div style="width:150px;flex:0 0 150px;font-weight:600;font-size:14px;color:#3a4452">${deptDisplay(d)}</div>
+      <input readonly value="${url}" style="flex:1;min-width:0;font-size:12.5px;color:#6a7384;border:1px solid var(--line);border-radius:7px;padding:6px 9px;background:#f8f9fb" onclick="this.select()">
+      <button onclick="copyOneDeptLink(${i},this)" style="flex:0 0 auto;border:none;background:var(--navy);color:#fff;border-radius:7px;padding:7px 12px;font-size:13px;font-weight:700;cursor:pointer">복사</button>
+    </div>`;
+  }).join("");
+}
+function copyOneDeptLink(i,btnEl){
+  const dept=DATA.depts[i];
+  const url=deptLinkURL(dept);
+  const done=()=>{ const orig=btnEl.textContent; btnEl.textContent="✅"; setTimeout(()=>btnEl.textContent=orig,1400); };
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(url).then(done).catch(()=>fallbackCopy(url,done));
+  } else fallbackCopy(url,done);
+}
+function toggleDeptLinks(){
+  const modal=document.getElementById("deptLinksModal");
+  const willShow=modal.classList.contains("hide");
+  if(willShow) renderDeptLinks();
+  modal.classList.toggle("hide", !willShow);
+}
+window.toggleDeptLinks=toggleDeptLinks;
+window.copyOneDeptLink=copyOneDeptLink;
+
 const AYCOL=["#9E1B32","#2E78C7","#1f7a52","#c98a18","#6B4E9E"]; // 학년도별 색
 
 function shade(v){
@@ -419,47 +511,172 @@ function dispName(r){ return r.track==="전공심화"?r.name+" (전공심화)":r
 const _AYORD=()=>DATA.ays.slice().sort().reverse(); // [2025,2024,2023]
 function ayColor(ay){ const i=_AYORD().indexOf(String(ay)); return ["#9E1B32","#2E78C7","#1f7a52","#6B4E9E","#c98a18"][i] ?? "#6a7384"; }
 
-const KEYWORDS=[
+/* ═══════════ 개선내용 분석 시스템 v2 ═══════════
+   1단계: 성격 분류 (개선요구 / 현행유지 / 긍정평가)
+   2단계: 개선요구를 A그룹(교육과정 개편 근거)과 B그룹(수업 운영 개선)으로 주제 분류
+   근거 드릴다운: 키워드 클릭 시 매칭 원문을 교과목·연도 정보와 함께 표시 */
+
+const NATURE_NOCHANGE=[/개선\s*(사항|내용|점)?\s*(이|은|는)?\s*없/,/현행\s*(대로)?\s*유지/,/개편\s*예정\s*없/,
+  /해당\s*없/,/특이\s*사항\s*없/,/^없음\.?$/,/^무\.?$/,/변경\s*(사항)?\s*없/,/수정\s*(사항)?\s*없/,
+  /현재\s*(교육과정|상태|과정)?\s*유지/,/유지\s*(가)?\s*적절/,/그대로\s*유지/,/개선점\s*없/];
+const NATURE_POSITIVE=[/잘\s*(되었|이루어|운영|진행)/,/우수하/,/만족도\s*(가|는)?\s*(매우\s*)?높/,
+  /적절(하게|히)?\s*(충족|운영|되었|이었|하였|함|됨)/,/(목표|성과)(를|가)?\s*달성(하였|되었|함|됨)/,
+  /충실히?\s*(운영|이행|진행)/,/원활하?게?\s*(운영|진행|이루어)/,/적합하다고\s*(판단|사료)/,
+  /적절한\s*(전공교육과정|교육과정|수업)으로\s*(운영|판단)/,/\d\.\d\s*이상으로\s*(매우\s*)?잘/];
+const NATURE_DEMAND=[/필요/,/요구/,/해야/,/하겠/,/할\s*예정/,/개선/,/보완/,/강화/,/확대/,/추가/,
+  /검토/,/권장/,/바람/,/요망/,/고려/,/조정/,/변경/,/도입/,/수정/,/노력/,/예정/,/계획/,/방안/,/제고/,/증진/,/향상/];
+function natureOf(t){
+  if(NATURE_NOCHANGE.some(p=>p.test(t))) return "현행유지";
+  if(NATURE_POSITIVE.some(p=>p.test(t)) && !NATURE_DEMAND.some(p=>p.test(t))) return "긍정평가";
+  return "개선요구";
+}
+
+/* A그룹: 교육과정 개편 근거 — 학과 교육과정 개발·개편의 직접 근거가 되는 신호 */
+const KW_CURRICULUM=[
+ {label:"학점·시수 조정",pats:[/학점\s*(을|의|이|은)?\s*(확대|축소|조정|증|감|늘|줄|변경|추가|부족|과다)/,/학점\s*(확대|축소)/,
+   /시수\s*(가|를|의|이)?\s*(부족|확대|축소|조정|증|감|늘|줄|많|적)/,/수업\s*시수/,/실습\s*시간\s*(이|의)?\s*(부족|확대|늘)/,
+   /(\d)\s*학점\s*(으로|을)\s*(구성|축소|확대|변경)/,/학점을?\s*줄이/]},
+ {label:"교과목 신설·통합·분리",pats:[/(교과목|과목|교과)\s*(을|를|의)?\s*신설/,/신설\s*(이|을|하|되|필요)/,
+   /(교과목|과목)\s*(을|를)?\s*통합/,/(수학|과학|이론|실습|영역|과목)\s*(교육)?\s*분리/,/분리\s*(및|가\s*필요|하여|운영)/,
+   /새로운?\s*(교과목|과목)\s*(의)?\s*(개설|편성)/,/별도\s*(의)?\s*(교과목|과목)/]},
+ {label:"교과목 중복·연계 조정",pats:[/중복/,/타\s*교과/,/타교과/,/선수\s*과목/,/선수과목/,/과목\s*간/,/교과\s*간/,
+   /(전|후)속\s*과목/]},
+ {label:"학기·학년 배치 조정",pats:[/학기\s*(로의)?\s*(이동|편성|변경|조정|배치)/,/자율학기/,
+   /학년\s*(으로)?\s*(이동|배치|변경|조정)/,/개설\s*(학기|시기|학년)/,/(\d)\s*학기로\s*(이동|편성|변경|옮)/,
+   /배치\s*(를|가)?\s*(조정|변경|재)/]},
+ {label:"교육과정 개편·구성 변경",pats:[/(교육\s*과정|교과\s*과정)(을|의|에)?\s*(개편|개선|재구성|재편|조정|정비)/,
+   /커리큘럼\s*(에|을|의)?\s*(포함|반영|개편|개선|조정|추가|재구성|수정)/,
+   /교과목\s*구성\s*(을|의|이)?\s*(변경|조정|개선|재)/,/교육과정\s*(반영|검토)/,/(과정|교과목)\s*개편/]},
+];
+/* B그룹: 수업 운영 개선 — 운영·교수법 차원의 개선 요구 */
+const KW_OPERATION=[
  {label:"현장·실무 연계 강화",mood:"요구",terms:["현장","실무","사례","견학","기관","임상"]},
  {label:"학생 참여 확대",mood:"필요",terms:["참여","상호작용","토론","발표","질문","소통","피드백"]},
- {label:"학습목표·내용 재설계",mood:"모색",terms:["학습목표","교과목 구성","내용 구성","커리큘럼"]},
- {label:"실습 환경 확충",mood:"필요",terms:["실습실","컴퓨터","전산","실습환경","실습 환경","장비"]},
+ {label:"학습목표·내용 재설계",mood:"모색",terms:["학습목표","내용 구성","교육내용 개선","학습 내용"]},
+ {label:"실습 환경 확충",mood:"필요",terms:["실습실","컴퓨터","전산","실습환경","실습 환경","장비","기자재"]},
  {label:"시청각 자료 보강",mood:"필요",terms:["시청각","동영상","영상","미디어","매체","자료 준비"]},
  {label:"평가 방식 개선",mood:"요구",terms:["평가","시험","퀴즈","과제","성적","형성평가"]},
  {label:"학습 동기 강화",mood:"모색",terms:["흥미","동기","강화물","가산점"]},
- {label:"수업 방식 개선",mood:"모색",terms:["블랜디드","블렌디드","온라인","비대면","대면","팀기반","TBL","수업방식","수업 방식","플립"]},
- {label:"예복습 강화",mood:"필요",terms:["사전학습","사전 학습","예습","복습"]},
- {label:"학습량·난이도 조정",mood:"필요",terms:["학습량","분량","난이도","진도"]},
- {label:"자격·국시 대비 강화",mood:"필요",terms:["자격","국가시험","국시","국준","자격증"]},
+ {label:"수업 방식 개선",mood:"모색",terms:["블랜디드","블렌디드","온라인","비대면","대면","팀기반","TBL","수업방식","수업 방식","플립","게이미피케이션","VR"]},
+ {label:"예복습 강화",mood:"필요",terms:["사전학습","사전 학습","예습","복습","review"]},
+ {label:"학습량·난이도 조정",mood:"필요",terms:["학습량","분량","난이도","진도","학습양"]},
+ {label:"자격·국시 대비 강화",mood:"필요",terms:["자격","국가시험","국시","국준","자격증","국가고시"]},
 ];
+
+/* 근거 드릴다운용 전역 저장소 */
+let _kwEvi={cur:[],op:[],nature:{}};
+
 function keywordStats(recs){
-  const items=[]; recs.forEach(r=>r.improve&&r.improve.forEach(t=>items.push(t)));
-  const counts=KEYWORDS.map(k=>({label:k.label,mood:k.mood,n:items.filter(t=>k.terms.some(tm=>t.includes(tm))).length}))
-    .filter(c=>c.n>0).sort((a,b)=>b.n-a.n);
-  return {total:items.length,counts};
+  // items: {t:텍스트, meta:{dept,name,ay,term,track}}
+  const items=[];
+  recs.forEach(r=>(r.improve||[]).forEach(t=>items.push({t,meta:{dept:r.dept,name:r.name,ay:r.ay,term:r.term,track:r.track}})));
+  const total=items.length;
+  // 1단계: 성격 분류
+  const byNature={개선요구:[],현행유지:[],긍정평가:[]};
+  items.forEach(it=>byNature[natureOf(it.t)].push(it));
+  const demands=byNature["개선요구"];
+  // 2단계: A그룹 (regex)
+  const cur=KW_CURRICULUM.map(k=>{
+    const hits=demands.filter(it=>k.pats.some(p=>p.test(it.t)));
+    return {label:k.label,n:hits.length,items:hits};
+  }).filter(c=>c.n>0).sort((a,b)=>b.n-a.n);
+  // 2단계: B그룹 (포함어)
+  const op=KW_OPERATION.map(k=>{
+    const hits=demands.filter(it=>k.terms.some(tm=>it.t.includes(tm)));
+    return {label:k.label,mood:k.mood,n:hits.length,items:hits};
+  }).filter(c=>c.n>0).sort((a,b)=>b.n-a.n);
+  const curSet=new Set(); cur.forEach(c=>c.items.forEach(it=>curSet.add(it)));
+  return {total,byNature,demands:demands.length,cur,op,curTotal:curSet.size};
 }
 const KWCOL=["#9E1B32","#2E78C7","#1f7a52","#6B4E9E","#c98a18","#1B2A4A","#b8472f","#2f8f6b","#7a5ea8","#4a6fa5","#a05a2c"];
+const CURCOL=["#7a1226","#9E1B32","#b8472f","#c96a4a","#d98a6a"];
+
 function keywordSummary(recs){
   const s=keywordStats(recs);
   if(!s.total) return "선택 조건에 해당하는 개선내용이 없습니다.";
-  if(!s.counts.length) return `개선내용 ${s.total}건 중 분류된 주제 키워드가 없습니다.`;
-  const t=s.counts, q=c=>`<b>‘${c.label}’</b> ${c.mood}(${c.n}건)`;
-  if(t.length===1) return `개선내용 ${s.total}건을 분석한 결과, 주로 ${q(t[0])} 의견이 나타났습니다.`;
-  const rest=t.slice(1,3).map(q).join(", ");
-  const tail = t.length>3 ? ` 순으로 나타났으며, 이 밖에 ${t.length-3}개 주제가 더 제기되었습니다.` : " 순으로 나타났습니다.";
-  return `개선내용 ${s.total}건을 분석한 결과, 주로 ${q(t[0])}, 그 다음으로 ${rest}${tail}`;
+  const pct=n=>Math.round(n/s.total*100);
+  let parts=[];
+  parts.push(`개선내용 <b>${s.total}건</b> 중 실질 개선 요구 <b>${s.demands}건(${pct(s.demands)}%)</b>, 현행 유지 의견 ${s.byNature["현행유지"].length}건(${pct(s.byNature["현행유지"].length)}%), 긍정 평가 ${s.byNature["긍정평가"].length}건(${pct(s.byNature["긍정평가"].length)}%)으로 분석되었습니다.`);
+  if(s.op.length){
+    const topOp=s.op.slice(0,3).map(c=>`‘${c.label}’ ${c.mood}(${c.n}건)`).join(", ");
+    parts.push(` 주요 개선 방향은 ${topOp} 순으로 나타났습니다.`);
+  }
+  return parts.join("");
 }
+
+function kwBarRow(c,i,group,colArr){
+  const max=arguments[4]||c.n;
+  const w=Math.max(4,Math.round(c.n/max*100));
+  const moodT=c.mood?`<span class="kwmood">${c.mood}</span>`:"";
+  return `<div class="kwrow kwclk" onclick="showKwEvidence('${group}',${i})" title="클릭하면 근거 원문을 볼 수 있습니다">
+    <div class="kwl"><span class="kwlname">${c.label}</span>${moodT}</div>
+    <div class="kwt"><i style="width:${w}%;background:${colArr[i%colArr.length]}"></i></div>
+    <div class="kwn">${c.n}</div></div>`;
+}
+
 function keywordBars(recs){
   const s=keywordStats(recs);
+  _kwEvi={cur:s.cur,op:s.op,nature:s.byNature};
   if(!s.total) return `<p class="cap" style="margin:0">선택 조건에 개선내용이 없습니다.</p>`;
-  if(!s.counts.length) return `<p class="cap" style="margin:0">분류된 키워드가 없습니다.</p>`;
-  const max=s.counts[0].n;
-  const bars=s.counts.map((c,i)=>{const w=Math.round(c.n/max*100);
-    return `<div class="kwrow"><div class="kwl"><span class="kwlname">${c.label}</span><span class="kwmood">${c.mood}</span></div>
-      <div class="kwt"><i style="width:${w}%;background:${KWCOL[i%KWCOL.length]}"></i></div>
-      <div class="kwn">${c.n}</div></div>`;}).join("");
-  return `<p class="cap" style="margin:0 0 11px">개선내용 ${s.total}건에서 추출한 주제별 빈도 (한 건이 여러 주제에 포함될 수 있음)</p>${bars}`;
+  const pct=n=>s.total?Math.round(n/s.total*100):0;
+  const nD=s.demands, nK=s.byNature["현행유지"].length, nP=s.byNature["긍정평가"].length;
+  // 성격 분포 스택바
+  const natureBar=`
+    <div style="margin:0 0 6px;font-size:13.5px;font-weight:700;color:#3a4452">개선내용 성격 분포 <span style="font-weight:400;color:var(--muted)">(전체 ${s.total}건 · 구분 클릭 시 원문 확인)</span></div>
+    <div style="display:flex;height:26px;border-radius:8px;overflow:hidden;font-size:12px;font-weight:700;color:#fff;cursor:pointer">
+      ${nD?`<div onclick="showNatureEvidence('개선요구')" style="width:${pct(nD)}%;background:var(--navy);display:flex;align-items:center;justify-content:center;min-width:52px" title="개선요구 원문 보기">요구 ${pct(nD)}%</div>`:""}
+      ${nK?`<div onclick="showNatureEvidence('현행유지')" style="width:${pct(nK)}%;background:#8a93a3;display:flex;align-items:center;justify-content:center;min-width:52px" title="현행유지 원문 보기">유지 ${pct(nK)}%</div>`:""}
+      ${nP?`<div onclick="showNatureEvidence('긍정평가')" style="width:${pct(nP)}%;background:#2f8f6b;display:flex;align-items:center;justify-content:center;min-width:52px" title="긍정평가 원문 보기">긍정 ${pct(nP)}%</div>`:""}
+    </div>
+    <div style="display:flex;gap:14px;margin:6px 0 0;font-size:12px;color:var(--muted)">
+      <span><i style="display:inline-block;width:9px;height:9px;border-radius:2px;background:var(--navy);margin-right:4px"></i>개선 요구 ${nD}건</span>
+      <span><i style="display:inline-block;width:9px;height:9px;border-radius:2px;background:#8a93a3;margin-right:4px"></i>현행 유지 ${nK}건</span>
+      <span><i style="display:inline-block;width:9px;height:9px;border-radius:2px;background:#2f8f6b;margin-right:4px"></i>긍정 평가 ${nP}건</span>
+    </div>`;
+  // 수업 운영 개선 (주제별 빈도)
+  const opMax=s.op.length?s.op[0].n:1;
+  const opHTML = s.op.length
+    ? `<div class="kwsec">
+        <div class="kwsec-title">🔧 개선 요구 주제 분석</div>
+        <p class="cap" style="margin:2px 0 10px">교수법·평가·환경 등 개선 요구의 주제별 빈도입니다. 각 항목을 클릭하면 근거 원문을 확인할 수 있습니다. (한 건이 여러 주제에 포함될 수 있음)</p>
+        ${s.op.map((c,i)=>kwBarRow(c,i,"op",KWCOL,opMax)).join("")}
+      </div>`
+    : "";
+  return natureBar+opHTML;
 }
+
+/* ── 근거 원문 드릴다운 모달 ── */
+function eviItemHTML(it){
+  const termT=it.meta.term?` · ${it.meta.term}학기`:"";
+  return `<div style="padding:10px 0;border-bottom:1px solid #f0f1f4">
+    <div style="font-size:12px;color:var(--muted);margin-bottom:4px">${deptDisplay(it.meta.dept)} · ${it.meta.name} · ${it.meta.ay}학년도${termT} · ${it.meta.track}</div>
+    <div style="font-size:14px;line-height:1.65;color:#242b36">${it.t}</div></div>`;
+}
+function openEviModal(title, subtitle, items){
+  const modal=document.getElementById("kwEviModal");
+  document.getElementById("kwEviTitle").textContent=title;
+  document.getElementById("kwEviSub").textContent=subtitle;
+  const list=document.getElementById("kwEviList");
+  list.innerHTML = items.length
+    ? items.map(eviItemHTML).join("")
+    : "<p class='cap'>해당 원문이 없습니다.</p>";
+  modal.classList.remove("hide");
+}
+function showKwEvidence(group,i){
+  const arr=group==="cur"?_kwEvi.cur:_kwEvi.op;
+  const c=arr[i]; if(!c) return;
+  const gname=group==="cur"?"교육과정 개편 근거":"수업 운영 개선";
+  openEviModal(`${c.label} (${c.n}건)`, `${gname} · 아래 원문이 이 주제로 분류되었습니다. 교육과정 개편 보고 자료에 그대로 인용할 수 있습니다.`, c.items);
+}
+function showNatureEvidence(nature){
+  const items=_kwEvi.nature[nature]||[];
+  const desc={개선요구:"실질적인 개선·변경 요구가 담긴 의견",현행유지:"개선 사항이 없거나 현행 유지가 적절하다는 의견",긍정평가:"운영 성과에 대한 긍정적 평가"}[nature]||"";
+  openEviModal(`${nature} (${items.length}건)`, desc, items);
+}
+function closeEviModal(){ document.getElementById("kwEviModal").classList.add("hide"); }
+window.showKwEvidence=showKwEvidence;
+window.showNatureEvidence=showNatureEvidence;
+window.closeEviModal=closeEviModal;
 /* 다중 추이선: series=[{label,color,points:[{ay,v}]}] */
 /* 도넛 차트: segs=[{label,value,color}] */
 function donut(segs, size, centerTop, centerBot){
@@ -616,11 +833,14 @@ function render(){
   }
   ["kpiSec","profileSec","qualSec","tableSec","trendSec"].forEach(id=>document.getElementById(id).classList.toggle("hide",isSum));
   document.getElementById("summarySec").classList.toggle("hide",!isSum);
-  // 종합 요약 탭: 학과 필터만 표시, 나머지 pill 필터 숨김
+  // 종합요약·보고서 탭: 학과 필터만 표시, 나머지 pill 필터 숨김
   document.querySelector(".filters").classList.remove("hide");
   document.querySelectorAll(".filters .fgroup").forEach((el,i)=>el.classList.toggle("hide",isSum&&i>0));
   const lbl=document.getElementById("fDeptLabel");
-  if(lbl) lbl.textContent=isSum?"학과별 종합 요약 조회":"학과 선택 (센터용 · \u2018전체 학과\u2019 조회 가능)";
+  if(lbl){
+    if(DATA.depts.length>1) lbl.textContent=isSum?"학과별 종합 요약 조회":"학과 선택 (센터용 · \u2018전체 학과\u2019 조회 가능)";
+    else lbl.textContent="학과";
+  }
   if(isSum){ renderSummary(); return; }
 
   const c=cfg(), AREAS=c.areas, SCALE=c.scale;
@@ -650,12 +870,16 @@ function render(){
       {l:"개선내용",v:impCount,u:"건 보유 연도",x:recs.reduce((s,r)=>s+(r.improve?r.improve.length:0),0)+"개 항목"}
     ].map(k=>`<div class="kpi${k.sel?' sel':''}"><div class="l">${k.l}</div><div class="v">${k.v}${k.u?` <small>${k.u}</small>`:""}</div><div class="x">${k.x}</div></div>`).join("");
   } else {
-    let lowIdx=null,lowVal=99; areaAvg.forEach((v,k)=>{if(v!=null&&v<lowVal){lowVal=v;lowIdx=k;}});
+    let lowIdx=null,lowVal=99,hiVal=-1;
+    areaAvg.forEach((v,k)=>{if(v!=null){if(v<lowVal){lowVal=v;lowIdx=k;} if(v>hiVal)hiVal=v;}});
+    const allEqual=lowIdx!=null && Math.abs(hiVal-lowVal)<0.005;
     document.getElementById("kpis").innerHTML=[
       {l:"분석 교과목 수",v:recs.length,u:"과목",x:label},
       {l:"전체 평균 점수",v:overall!=null?overall.toFixed(2):"-",u:"/ "+SCALE,x:"전 영역 종합(참고)"},
       {l:"개선내용 도출 과목",v:impCount,u:"과목",x:recs.length?`전체의 ${Math.round(impCount/recs.length*100)}%`:""},
-      {l:"가장 낮게 평가된 영역",v:lowIdx!=null?AREAS[lowIdx]:"-",u:"",x:lowIdx!=null?`평균 ${lowVal.toFixed(2)} · 참고`:""}
+      allEqual
+        ? {l:"가장 낮게 평가된 영역",v:"전 영역 동일",u:"",x:`모든 영역 평균 ${lowVal.toFixed(2)} · 참고`}
+        : {l:"가장 낮게 평가된 영역",v:lowIdx!=null?AREAS[lowIdx]:"-",u:"",x:lowIdx!=null?`평균 ${lowVal.toFixed(2)} · 참고`:""}
     ].map(k=>`<div class="kpi"><div class="l">${k.l}</div><div class="v">${k.v}${k.u?` <small>${k.u}</small>`:""}</div><div class="x">${k.x}</div></div>`).join("");
   }
 
@@ -702,7 +926,7 @@ function render(){
   const codeCmp=(a,b)=>((a.track==="전공심화"?1:0)-(b.track==="전공심화"?1:0))||(a.code<b.code?-1:a.code>b.code?1:0)||((b.ay>a.ay)?1:(b.ay<a.ay)?-1:0)||((a.term||0)-(b.term||0));
 
   // ── 개선내용 (항상 2025→2024→2023 최신 학년도 우선) ──
-  document.getElementById("kwCard").innerHTML=`<h3>개선내용 키워드 분석</h3><p class="kwsum">${keywordSummary(recs)}</p>`+keywordBars(recs);
+  document.getElementById("kwCard").innerHTML=`<h3>개선내용 분석 — 성격 분류 · 주제별 요약</h3><p class="kwsum">${keywordSummary(recs)}</p>`+keywordBars(recs);
   const qsorted=[...recs].sort(recentCmp);
   const q=qsorted.filter(r=>r.improve&&r.improve.length);
   document.getElementById("qual").innerHTML=q.length?q.map(r=>{const tm=r.term?` · ${r.term}학기`:"";
@@ -873,7 +1097,52 @@ function renderSummary(){
       </table></div></div>`;
   }
 
-  document.getElementById("summaryBody").innerHTML=`
+  // ── 상단: 교과목/교육과정 CQI 결과 표 (연도별 · 자동 요약 · 빈 연도 포함) ──
+  function sumKindTable(kind, kname, icon){
+    const areas=(kind==="course"?DATA.course.areas:DATA.major.areas);
+    const rows=aysShown.map(ay=>{
+      const col=ayColor(ay);
+      const recs=repRecsOf(kind,ay);
+      const has=recs.length>0;
+      // 영역별 평균 셀
+      const areaCells=areas.map((a,i)=>{
+        if(!has) return `<td style="border:1px solid #d9dde5;text-align:center;color:#c2c7d0;font-size:12px">—</td>`;
+        const v=mean(recs.map(r=>(r.scores||[])[i]).filter(x=>x!=null));
+        const sh=shade(v);
+        return `<td style="border:1px solid #d9dde5;text-align:center;font-size:12.5px;font-weight:700;background:${sh.bg};color:${sh.fg};padding:6px 4px">${v!=null?v.toFixed(2):"—"}</td>`;
+      }).join("");
+      const totalAvg=has?mean(recs.map(r=>r.avg)):null;
+      const key=ay+"|"+kind;
+      const resTxt=repSt.editCache[key+"|res"] ?? (has?repResultText(kind,ay):"해당 연도 결과 없음");
+      const planTxt=repSt.editCache[key+"|plan"] ?? (has?(repPlanText(kind,ay)||""):"");
+      return `<tr>
+        <td style="text-align:center;vertical-align:middle;font-weight:800;color:#fff;background:${col};border:1px solid #d9dde5;width:70px;min-width:70px">${ay}</td>
+        ${areaCells}
+        <td style="border:1px solid #d9dde5;text-align:center;font-weight:800;font-size:13px;background:${col}14;color:${col};padding:6px 4px">${totalAvg!=null?totalAvg.toFixed(2):"—"}</td>
+        <td contenteditable="true" data-repkey="${key}|res" class="repEdit" style="border:1px solid #d9dde5;padding:8px 11px;font-size:13px;line-height:1.6;min-width:210px;${has?"":"color:#9aa1ae"}">${resTxt}</td>
+        <td contenteditable="true" data-repkey="${key}|plan" class="repEdit" style="border:1px solid #d9dde5;padding:8px 11px;font-size:13px;line-height:1.6;min-width:210px">${planTxt||(has?"":"—")}</td>
+      </tr>`;
+    }).join("");
+    const tid="sumTbl_"+kind;
+    return `<div class="card" style="margin-bottom:16px">
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
+        <h3 style="margin:0">${icon} ${kname} 결과 표 <span class="ctag">연도별 자동 요약 · 평가결과/개선 계획 클릭 수정</span></h3>
+        <button onclick="copySumTable('${tid}',this)" style="background:var(--navy);color:#fff;border:none;border-radius:8px;padding:8px 15px;font-size:13px;font-weight:700;cursor:pointer;flex:0 0 auto">📄 표 복사</button>
+      </div>
+      <div style="overflow-x:auto;margin-top:10px"><table id="${tid}" style="border-collapse:collapse;width:100%;font-size:13px">
+        <thead><tr>
+          <th style="background:var(--navy);color:#fff;border:1px solid #d9dde5;padding:7px 6px">평가<br>년도</th>
+          ${areas.map(a=>`<th style="background:var(--navy);color:#fff;border:1px solid #d9dde5;padding:7px 4px;font-size:11.5px;font-weight:700">${a}</th>`).join("")}
+          <th style="background:var(--navy);color:#fff;border:1px solid #d9dde5;padding:7px 6px;font-size:12px">전체<br>평균</th>
+          <th style="background:var(--navy);color:#fff;border:1px solid #d9dde5;padding:7px 8px">평가결과</th>
+          <th style="background:var(--navy);color:#fff;border:1px solid #d9dde5;padding:7px 8px">개선 계획</th>
+        </tr></thead><tbody>${rows}</tbody></table></div>
+      <p class="cap" style="margin:8px 0 0">영역별 평균은 4점 척도이며 색 농도는 점수 수준(참고용)입니다. 평가결과·개선 계획 칸은 클릭하여 수정할 수 있고, 「표 복사」 시 표만 깔끔하게 복사되어 한글(HWP)·워드에 붙여넣을 수 있습니다.</p>
+    </div>`;
+  }
+  const topTables = sumKindTable("course","교과목 CQI","📘") + sumKindTable("major","교육과정 CQI","📙");
+
+  document.getElementById("summaryBody").innerHTML=topTables+`
     <p class="cap" style="margin:-4px 0 16px">${intro} 점수는 4점 척도의 참고 분포이며 우열 평가가 아닙니다.</p>
     <div class="cmphead">${cur}학년도 기준 ${prev?`(직전 ${prev}학년도 대비)`:""}</div>
     ${cmpHtml}
@@ -890,6 +1159,77 @@ function renderSummary(){
       <p class="cap">엑셀 원본의 4개 대분류 기준 · 4점 척도</p>
       <div style="overflow-x:auto">${groupTable}</div></div>
     ${deptCompHtml}`;
+  // 결과표 편집 캐시 (연도 전환·재렌더에도 수정 내용 유지)
+  document.querySelectorAll("#summaryBody .repEdit").forEach(td=>{
+    td.addEventListener("input",()=>{ repSt.editCache[td.dataset.repkey]=td.innerText; });
+  });
+}
+
+/* 결과표를 '표만' 깔끔하게 복사 (편집 속성·안내 문구 제거 후 복사) */
+function copySumTable(tid, btnEl){
+  const tbl=document.getElementById(tid);
+  if(!tbl) return;
+  const clone=tbl.cloneNode(true);
+  clone.removeAttribute("id");
+  clone.querySelectorAll("[contenteditable]").forEach(td=>{
+    td.removeAttribute("contenteditable");
+    td.removeAttribute("data-repkey");
+    td.classList.remove("repEdit");
+  });
+  const holder=document.createElement("div");
+  holder.style.position="fixed"; holder.style.left="-9999px"; holder.style.top="0";
+  holder.appendChild(clone);
+  document.body.appendChild(holder);
+  const range=document.createRange(); range.selectNode(clone);
+  const selObj=window.getSelection(); selObj.removeAllRanges(); selObj.addRange(range);
+  let ok=false;
+  try{ ok=document.execCommand("copy"); }catch(e){}
+  selObj.removeAllRanges();
+  document.body.removeChild(holder);
+  if(btnEl){ const orig=btnEl.textContent; btnEl.textContent=ok?"✅ 복사됨":"복사 실패"; setTimeout(()=>btnEl.textContent=orig,1800); }
+}
+window.copySumTable=copySumTable;
+
+/* ═══════════ 교육과정 개발(개편) 결과보고서 표 자동 생성 ═══════════ */
+let repSt={editCache:{}};  // 결과표 평가결과·개선계획 수정 내용 캐시 (연도 전환에도 유지)
+
+function repRecsOf(kind, ay){
+  const recs=(kind==="course"?DATA.course.records:(DATA.major.records||[]));
+  return recs.filter(r=>(st.dept==="전체"||r.dept===st.dept) && r.ay===ay);
+}
+/* 평가결과 자동 요약 */
+function repResultText(kind, ay){
+  const recs=repRecsOf(kind, ay);
+  if(!recs.length) return "";
+  const areas=(kind==="course"?DATA.course.areas:DATA.major.areas);
+  const avg=mean(recs.map(r=>r.avg));
+  // 영역별 평균 → 최고/최저
+  const aAvgs=areas.map((a,i)=>({a, v:mean(recs.map(r=>(r.scores||[])[i]).filter(x=>x!=null))})).filter(x=>x.v!=null);
+  aAvgs.sort((x,y)=>y.v-x.v);
+  const hi=aAvgs[0], lo=aAvgs[aAvgs.length-1];
+  const impN=recs.filter(r=>r.improve&&r.improve.length).length;
+  let s=`분석 ${kind==="course"?"교과목":"과목"} ${recs.length}개 · 전체 평균 ${avg!=null?avg.toFixed(2):"-"}/4점.`;
+  if(hi&&lo){
+    if(Math.abs(hi.v-lo.v)<0.005) s+=` 전 영역 점수 동일(${hi.v.toFixed(2)}).`;
+    else s+=` 최고 영역은 '${hi.a}'(${hi.v.toFixed(2)}), 상대적으로 낮은 영역은 '${lo.a}'(${lo.v.toFixed(2)})로 나타남.`;
+  }
+  s+=` 개선내용 도출 ${impN}과목.`;
+  return s;
+}
+/* 개선계획 자동 요약 — 키워드 분석 재활용 */
+function repPlanText(kind, ay){
+  const recs=repRecsOf(kind, ay);
+  if(!recs.length) return "";
+  const s=keywordStats(recs);
+  if(!s.total) return "도출된 개선내용 없음.";
+  let parts=[];
+  if(s.op.length){
+    parts.push("주요 개선 방향: "+s.op.slice(0,3).map(c=>`${c.label}(${c.n}건)`).join(", "));
+  }
+  if(s.byNature["현행유지"].length>=s.total*0.5){
+    parts.push(`현행 유지 의견이 다수(${s.byNature["현행유지"].length}건)로 안정적 운영 판단`);
+  }
+  return parts.join(". ")+(parts.length?".":"");
 }
 function toggleImp(i){document.getElementById("imp"+i).classList.toggle("open");}
 function setSort(v){ st.sort=v; render(); document.getElementById("tableSec").scrollIntoView({behavior:'smooth',block:'start'}); }
@@ -901,9 +1241,18 @@ window.pickDept=pickDept;
 
 function buildPills(elId,key,opts){
   const el=document.getElementById(elId);
-  el.innerHTML=opts.map(o=>`<button class="pill${o.val===st[key]?' active':''}" data-v="${o.val}">${o.lab}</button>`).join("");
+  el.innerHTML=opts.map(o=>{
+    const on=o.val===st[key];
+    const colStyle=o.col?(on?`background:${o.col};border-color:${o.col};color:#fff`:`border-color:${o.col};color:${o.col};font-weight:700`):"";
+    return `<button class="pill${on?' active':''}" data-v="${o.val}" data-col="${o.col||''}" style="${colStyle}">${o.lab}</button>`;
+  }).join("");
   el.querySelectorAll(".pill").forEach(b=>b.onclick=()=>{st[key]=b.dataset.v;
-    el.querySelectorAll(".pill").forEach(x=>x.classList.toggle("active",x===b)); render();});
+    el.querySelectorAll(".pill").forEach(x=>{
+      const on=x===b;
+      x.classList.toggle("active",on);
+      const c=x.dataset.col;
+      if(c){ x.style.cssText=on?`background:${c};border-color:${c};color:#fff`:`border-color:${c};color:${c};font-weight:700`; }
+    }); render();});
 }
 function initFilters(){
   const dsel=document.getElementById("fDept");
@@ -912,14 +1261,22 @@ function initFilters(){
     DATA.depts.map(d=>`<option value="${d}">${deptDisplay(d)}</option>`).join("");
   if(!multiDept && DATA.depts.length===1){ st.dept=DATA.depts[0]; }
   dsel.value=st.dept;
-  const ayOpts=[{lab:"전체",val:"전체"}].concat(DATA.ays.slice().sort().reverse().map(a=>({lab:a,val:a})));
+  // 학과별 분리 파일(단일 학과 전용)인 경우: 드롭다운 대신 고정 표시로 안내
+  const baseLbl=document.getElementById("fDeptLabel");
+  if(baseLbl && !multiDept && DATA.depts.length===1){
+    baseLbl.textContent="학과";
+    dsel.disabled=true;
+  }
+  const dlBtn=document.getElementById("deptLinksBtn");
+  if(dlBtn) dlBtn.classList.toggle("hide", !multiDept);
+  const ayOpts=[{lab:"전체",val:"전체"}].concat(DATA.ays.slice().sort().reverse().map(a=>({lab:a,val:a,col:ayColor(a)})));
   buildPills("fAy","ay",ayOpts);
   const trackOpts=[{lab:"전체",val:"전체"},{lab:"일반",val:"일반"},{lab:"전공심화",val:"전공심화"}];
   if((DATA.tracks||[]).includes("대학원")) trackOpts.push({lab:"대학원",val:"대학원"});
   buildPills("fTrack","track",trackOpts);
   buildPills("fTerm","term",[{lab:"전체",val:"전체"},{lab:"1학기",val:"1"},{lab:"2학기",val:"2"}]);
   buildPills("fYear","year",[{lab:"전체",val:"전체"},{lab:"1학년",val:"1"},{lab:"2학년",val:"2"},{lab:"3학년",val:"3"},{lab:"4학년",val:"4"}]);
-  const sumOpts=[{lab:"전체 ("+DATA.ays.length+"개년)",val:"전체"}].concat(DATA.ays.slice().sort().reverse().map(a=>({lab:a+"학년도",val:a})));
+  const sumOpts=[{lab:"전체 ("+DATA.ays.length+"개년)",val:"전체"}].concat(DATA.ays.slice().sort().reverse().map(a=>({lab:a+"학년도",val:a,col:ayColor(a)})));
   buildPills("sumAyPills","sumAy",sumOpts);
 }
 applyHashToState();
@@ -1129,7 +1486,7 @@ function exportAll(){
   }, i*700));
 }
 window.exportHTML=exportHTML; window.exportAll=exportAll;
-function setStatus(msg,kind){const el=document.getElementById("loadStatus");el.textContent=msg;el.className="lstatus "+(kind||"");}
+function setStatus(msg,kind){const el=document.getElementById("loadStatus");if(el){el.textContent=msg;el.className="lstatus "+(kind||"");}}
 async function handleUpload(files, mode){
   setStatus(`${files.length}개 파일 분석 중…`,"");
   try{
@@ -1166,8 +1523,7 @@ async function handleUpload(files, mode){
     setStatus(msg,kind);
   }catch(err){ setStatus("오류: "+err.message,"err"); }
 }
-document.getElementById("fileInput").onchange=e=>{const f=[...e.target.files];if(f.length)handleUpload(f,"replace");e.target.value="";};
-document.getElementById("fileMerge").onchange=e=>{const f=[...e.target.files];if(f.length)handleUpload(f,"merge");e.target.value="";};
+
 
 render();
 </script>
