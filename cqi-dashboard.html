@@ -251,7 +251,7 @@
     <div class="brandline"><span class="dot"></span> 교과목 · 전공교육과정 CQI 환류 시스템 <span id="updatedAt" style="margin-left:10px;font-weight:600;color:#8a93a3"></span></div>
     <h1 style="margin-bottom:4px">교과목 · 전공교육과정 CQI 결과 및 개선내용 환류 대시보드</h1>
     <div id="deptTitle" style="font-size:24px;font-weight:800;color:#ffd9de;letter-spacing:-.4px;margin:0 0 12px"><span id="deptName"></span> 대시보드</div>
-    <p class="sub">교과목 CQI 분석 결과는 교육과정 개편 시 <b>교과목의 유지 · 폐지 · 변경 · 신설</b>의 객관적 근거자료로, 전공교육과정 CQI 분석 결과는 <b>전공 교육과정 구성</b>의 객관적 근거자료로 활용하여 교육개선에 반영합니다.  특정 교과목을 선택하면 연도별 추이를 볼 수 있습니다.</p>
+    <p class="sub">교과목 CQI 분석 결과는 교육과정 개편 시 <b>교과목의 유지 · 폐지 · 변경 · 신설</b>의 객관적 근거자료로, 전공교육과정 CQI 분석 결과는 <b>전공 교육과정 구성</b>의 객관적 근거자료로 활용하여 교육개선에 반영합니다. 특정 교과목을 선택하면 연도별 추이를 볼 수 있습니다.</p>
     <div class="tabs">
       <button class="tab active" data-tab="course">교과목 CQI</button>
       <button class="tab" data-tab="major">전공교육과정 CQI</button>
@@ -330,7 +330,7 @@
         <div class="radar-legend" id="radarLegend"></div>
       </div>
       <div class="card"><h3>영역별 평균 (참고)</h3>
-        <p class="cap">영역 간 상대 분포 비교용 · </p>
+        <p class="cap">영역 간 상대 분포 비교용 · 점수의 좋고 나쁨을 뜻하지 않습니다</p>
         <div id="areaBars"></div>
       </div>
     </div>
@@ -564,12 +564,12 @@ const KW_OPERATION=[
 ];
 
 /* 근거 드릴다운용 전역 저장소 */
-let _kwEvi={cur:[],op:[],nature:{}};
+let _kwEvi={};  // 슬롯(교과목/전공교육과정)별 근거 저장소
 
-function keywordStats(recs){
-  // items: {t:텍스트, meta:{dept,name,ay,term,track}}
+function keywordStats(recs, kindLabel){
+  // items: {t:텍스트, meta:{dept,name,ay,term,track,kind}}
   const items=[];
-  recs.forEach(r=>(r.improve||[]).forEach(t=>items.push({t,meta:{dept:r.dept,name:r.name,ay:r.ay,term:r.term,track:r.track}})));
+  recs.forEach(r=>(r.improve||[]).forEach(t=>items.push({t,meta:{dept:r.dept,name:r.name,ay:r.ay,term:r.term,track:r.track,kind:kindLabel||r._kind}})));
   const total=items.length;
   // 1단계: 성격 분류
   const byNature={개선요구:[],현행유지:[],긍정평가:[]};
@@ -591,8 +591,8 @@ function keywordStats(recs){
 const KWCOL=["#9E1B32","#2E78C7","#1f7a52","#6B4E9E","#c98a18","#1B2A4A","#b8472f","#2f8f6b","#7a5ea8","#4a6fa5","#a05a2c"];
 const CURCOL=["#7a1226","#9E1B32","#b8472f","#c96a4a","#d98a6a"];
 
-function keywordSummary(recs){
-  const s=keywordStats(recs);
+function keywordSummary(recs, kindLabel){
+  const s=keywordStats(recs, kindLabel);
   if(!s.total) return "선택 조건에 해당하는 개선내용이 없습니다.";
   const pct=n=>Math.round(n/s.total*100);
   let parts=[];
@@ -604,19 +604,19 @@ function keywordSummary(recs){
   return parts.join("");
 }
 
-function kwBarRow(c,i,group,colArr){
-  const max=arguments[4]||c.n;
-  const w=Math.max(4,Math.round(c.n/max*100));
+function kwBarRow(c,i,slot,colArr,max){
+  const w=Math.max(4,Math.round(c.n/(max||c.n)*100));
   const moodT=c.mood?`<span class="kwmood">${c.mood}</span>`:"";
-  return `<div class="kwrow kwclk" onclick="showKwEvidence('${group}',${i})" title="클릭하면 근거 원문을 볼 수 있습니다">
+  return `<div class="kwrow kwclk" onclick="showKwEvidence('${slot}',${i})" title="클릭하면 근거 원문을 볼 수 있습니다">
     <div class="kwl"><span class="kwlname">${c.label}</span>${moodT}</div>
     <div class="kwt"><i style="width:${w}%;background:${colArr[i%colArr.length]}"></i></div>
     <div class="kwn">${c.n}</div></div>`;
 }
 
-function keywordBars(recs){
-  const s=keywordStats(recs);
-  _kwEvi={cur:s.cur,op:s.op,nature:s.byNature};
+function keywordBars(recs, kindLabel){
+  const slot = kindLabel || "기본";
+  const s=keywordStats(recs, kindLabel);
+  _kwEvi[slot]={op:s.op,nature:s.byNature};
   if(!s.total) return `<p class="cap" style="margin:0">선택 조건에 개선내용이 없습니다.</p>`;
   const pct=n=>s.total?Math.round(n/s.total*100):0;
   const nD=s.demands, nK=s.byNature["현행유지"].length, nP=s.byNature["긍정평가"].length;
@@ -624,9 +624,9 @@ function keywordBars(recs){
   const natureBar=`
     <div style="margin:0 0 6px;font-size:13.5px;font-weight:700;color:#3a4452">개선내용 성격 분포 <span style="font-weight:400;color:var(--muted)">(전체 ${s.total}건 · 구분 클릭 시 원문 확인)</span></div>
     <div style="display:flex;height:26px;border-radius:8px;overflow:hidden;font-size:12px;font-weight:700;color:#fff;cursor:pointer">
-      ${nD?`<div onclick="showNatureEvidence('개선요구')" style="width:${pct(nD)}%;background:var(--navy);display:flex;align-items:center;justify-content:center;min-width:52px" title="개선요구 원문 보기">요구 ${pct(nD)}%</div>`:""}
-      ${nK?`<div onclick="showNatureEvidence('현행유지')" style="width:${pct(nK)}%;background:#8a93a3;display:flex;align-items:center;justify-content:center;min-width:52px" title="현행유지 원문 보기">유지 ${pct(nK)}%</div>`:""}
-      ${nP?`<div onclick="showNatureEvidence('긍정평가')" style="width:${pct(nP)}%;background:#2f8f6b;display:flex;align-items:center;justify-content:center;min-width:52px" title="긍정평가 원문 보기">긍정 ${pct(nP)}%</div>`:""}
+      ${nD?`<div onclick="showNatureEvidence('${slot}','개선요구')" style="width:${pct(nD)}%;background:var(--navy);display:flex;align-items:center;justify-content:center;min-width:52px" title="개선요구 원문 보기">요구 ${pct(nD)}%</div>`:""}
+      ${nK?`<div onclick="showNatureEvidence('${slot}','현행유지')" style="width:${pct(nK)}%;background:#8a93a3;display:flex;align-items:center;justify-content:center;min-width:52px" title="현행유지 원문 보기">유지 ${pct(nK)}%</div>`:""}
+      ${nP?`<div onclick="showNatureEvidence('${slot}','긍정평가')" style="width:${pct(nP)}%;background:#2f8f6b;display:flex;align-items:center;justify-content:center;min-width:52px" title="긍정평가 원문 보기">긍정 ${pct(nP)}%</div>`:""}
     </div>
     <div style="display:flex;gap:14px;margin:6px 0 0;font-size:12px;color:var(--muted)">
       <span><i style="display:inline-block;width:9px;height:9px;border-radius:2px;background:var(--navy);margin-right:4px"></i>개선 요구 ${nD}건</span>
@@ -639,17 +639,22 @@ function keywordBars(recs){
     ? `<div class="kwsec">
         <div class="kwsec-title">🔧 개선 요구 주제 분석</div>
         <p class="cap" style="margin:2px 0 10px">교수법·평가·환경 등 개선 요구의 주제별 빈도입니다. 각 항목을 클릭하면 근거 원문을 확인할 수 있습니다. (한 건이 여러 주제에 포함될 수 있음)</p>
-        ${s.op.map((c,i)=>kwBarRow(c,i,"op",KWCOL,opMax)).join("")}
+        ${s.op.map((c,i)=>kwBarRow(c,i,slot,KWCOL,opMax)).join("")}
       </div>`
     : "";
   return natureBar+opHTML;
 }
 
 /* ── 근거 원문 드릴다운 모달 ── */
+function kindBadge(kind){
+  if(!kind) return "";
+  const isC = kind==="교과목";
+  return `<span style="display:inline-block;font-size:11px;font-weight:800;color:#fff;background:${isC?"var(--navy)":"var(--crimson)"};border-radius:4px;padding:1px 7px;margin-right:6px;vertical-align:1px">${isC?"교과목 CQI":"전공교육과정 CQI"}</span>`;
+}
 function eviItemHTML(it){
   const termT=it.meta.term?` · ${it.meta.term}학기`:"";
   return `<div style="padding:10px 0;border-bottom:1px solid #f0f1f4">
-    <div style="font-size:12px;color:var(--muted);margin-bottom:4px">${deptDisplay(it.meta.dept)} · ${it.meta.name} · ${it.meta.ay}학년도${termT} · ${it.meta.track}</div>
+    <div style="font-size:12px;color:var(--muted);margin-bottom:4px">${kindBadge(it.meta.kind)}${deptDisplay(it.meta.dept)} · ${it.meta.name} · ${it.meta.ay}학년도${termT} · ${it.meta.track}</div>
     <div style="font-size:14px;line-height:1.65;color:#242b36">${it.t}</div></div>`;
 }
 function openEviModal(title, subtitle, items){
@@ -662,16 +667,18 @@ function openEviModal(title, subtitle, items){
     : "<p class='cap'>해당 원문이 없습니다.</p>";
   modal.classList.remove("hide");
 }
-function showKwEvidence(group,i){
-  const arr=group==="cur"?_kwEvi.cur:_kwEvi.op;
-  const c=arr[i]; if(!c) return;
-  const gname=group==="cur"?"교육과정 개편 근거":"수업 운영 개선";
-  openEviModal(`${c.label} (${c.n}건)`, `${gname} · 아래 원문이 이 주제로 분류되었습니다. 교육과정 개편 보고 자료에 그대로 인용할 수 있습니다.`, c.items);
+function showKwEvidence(slot,i){
+  const box=_kwEvi[slot]; if(!box) return;
+  const c=box.op[i]; if(!c) return;
+  const src = slot==="기본" ? "" : `${slot} CQI 개선내용 · `;
+  openEviModal(`${c.label} (${c.n}건)`, `${src}아래 원문이 이 주제로 분류되었습니다. 교육과정 개편 보고 자료에 그대로 인용할 수 있습니다.`, c.items);
 }
-function showNatureEvidence(nature){
-  const items=_kwEvi.nature[nature]||[];
+function showNatureEvidence(slot,nature){
+  const box=_kwEvi[slot]; if(!box) return;
+  const items=box.nature[nature]||[];
+  const src = slot==="기본" ? "" : `${slot} CQI 개선내용 · `;
   const desc={개선요구:"실질적인 개선·변경 요구가 담긴 의견",현행유지:"개선 사항이 없거나 현행 유지가 적절하다는 의견",긍정평가:"운영 성과에 대한 긍정적 평가"}[nature]||"";
-  openEviModal(`${nature} (${items.length}건)`, desc, items);
+  openEviModal(`${nature} (${items.length}건)`, src+desc, items);
 }
 function closeEviModal(){ document.getElementById("kwEviModal").classList.add("hide"); }
 window.showKwEvidence=showKwEvidence;
@@ -926,7 +933,7 @@ function render(){
   const codeCmp=(a,b)=>((a.track==="전공심화"?1:0)-(b.track==="전공심화"?1:0))||(a.code<b.code?-1:a.code>b.code?1:0)||((b.ay>a.ay)?1:(b.ay<a.ay)?-1:0)||((a.term||0)-(b.term||0));
 
   // ── 개선내용 (항상 2025→2024→2023 최신 학년도 우선) ──
-  document.getElementById("kwCard").innerHTML=`<h3>개선내용 분석 — 성격 분류 · 주제별 요약</h3><p class="kwsum">${keywordSummary(recs)}</p>`+keywordBars(recs);
+  document.getElementById("kwCard").innerHTML=`<h3>개선내용 분석 — 성격 분류 · 주제별 요약</h3><p class="kwsum">${keywordSummary(recs,curTab==="major"?"전공교육과정":"교과목")}</p>`+keywordBars(recs,curTab==="major"?"전공교육과정":"교과목");
   const qsorted=[...recs].sort(recentCmp);
   const q=qsorted.filter(r=>r.improve&&r.improve.length);
   document.getElementById("qual").innerHTML=q.length?q.map(r=>{const tm=r.term?` · ${r.term}학기`:"";
@@ -1065,9 +1072,10 @@ function renderSummary(){
   }).join("");
   const groupTable=`<table class="sumtbl">${gThd}${gBody}</table>`;
 
-  // 키워드 (조회 연도 반영)
-  const kwRecs = st.sumAy==="전체" ? C.concat(M) : C.concat(M).filter(r=>r.ay===st.sumAy);
-  const kwTitle = st.sumAy==="전체" ? "개선내용 키워드 (최근 3개년 종합)" : `개선내용 키워드 (${st.sumAy}학년도)`;
+  // 개선내용 분석 — 교과목 CQI / 전공교육과정 CQI 출처를 명확히 분리
+  const kwC = st.sumAy==="전체" ? C : C.filter(r=>r.ay===st.sumAy);
+  const kwM = st.sumAy==="전체" ? M : M.filter(r=>r.ay===st.sumAy);
+  const kwPeriod = st.sumAy==="전체" ? "최근 3개년 종합" : `${st.sumAy}학년도`;
 
   const intro = st.sumAy==="전체"
     ? "2026학년도 기준 최근 3개 학년도(2025 · 2024 · 2023)를 한눈에 비교합니다. 가장 먼저 참고할 2025학년도를 좌측에 배치했고, 학년도마다 색을 다르게 표시했습니다."
@@ -1143,17 +1151,22 @@ function renderSummary(){
   const topTables = sumKindTable("course","교과목 CQI","📘") + sumKindTable("major","교육과정 CQI","📙");
 
   document.getElementById("summaryBody").innerHTML=topTables+`
-    <p class="cap" style="margin:-4px 0 16px">${intro} 점수는 4점 척도의 참고 분포이며 우열 평가가 아닙니다.</p>
+    <p class="cap" style="margin:-4px 0 16px">${intro}</p>
     <div class="cmphead">${cur}학년도 기준 ${prev?`(직전 ${prev}학년도 대비)`:""}</div>
     ${cmpHtml}
     ${donutHtml}
     <div class="card" style="margin-bottom:16px"><h3>학년도별 핵심 지표</h3><div style="overflow-x:auto">${tableHtml}</div></div>
-    <div class="two" style="margin-bottom:16px">
-      <div class="card"><h3>학년도별 평균 점수 추이</h3><p class="cap">교과목·전공교육과정 전체 평균의 연도 변화 · x축 연도는 색으로 구분</p>
+    <div class="card" style="margin-bottom:16px"><h3>학년도별 평균 점수 추이</h3><p class="cap">교과목·전공교육과정 전체 평균의 연도 변화 · x축 연도는 색으로 구분</p>
         <div style="display:flex;justify-content:center">${trendMulti(series)}</div>
         <div class="radar-legend">${trendLeg}</div>
         <div class="radar-legend" style="margin-top:4px">${ayLeg}</div></div>
-      <div class="card"><h3>${kwTitle}</h3><p class="kwsum">${keywordSummary(kwRecs)}</p>${keywordBars(kwRecs)}</div>
+    <div class="two" style="margin-bottom:16px">
+      <div class="card"><h3>📘 교과목 CQI 개선내용 분석 <span class="ctag">${kwPeriod}</span></h3>
+        <p class="cap" style="margin:2px 0 10px">교과목 단위 CQI에서 도출된 개선내용입니다. 항목·구분 클릭 시 근거 원문(교과목 표시)을 확인할 수 있습니다.</p>
+        <p class="kwsum">${keywordSummary(kwC,"교과목")}</p>${keywordBars(kwC,"교과목")}</div>
+      <div class="card"><h3>📙 전공교육과정 CQI 개선내용 분석 <span class="ctag">${kwPeriod}</span></h3>
+        <p class="cap" style="margin:2px 0 10px">전공교육과정 단위 CQI에서 도출된 개선내용입니다. 항목·구분 클릭 시 근거 원문(교과목 표시)을 확인할 수 있습니다.</p>
+        <p class="kwsum">${keywordSummary(kwM,"전공교육과정")}</p>${keywordBars(kwM,"전공교육과정")}</div>
     </div>
     <div class="card" style="margin-bottom:16px"><h3>전공교육과정 대분류별 평균 (학년도 비교)</h3>
       <p class="cap">엑셀 원본의 4개 대분류 기준 · 4점 척도</p>
