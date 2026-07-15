@@ -28,7 +28,8 @@
     color:rgba(255,255,255,.78);background:transparent;padding:13px 20px;border-radius:11px 11px 0 0;transition:.15s}
   .tab:hover{color:#fff;background:rgba(255,255,255,.08)}
   .tab.active{color:var(--navy);background:var(--paper)}
-  .printbtn-top{margin-left:auto;align-self:center;font-size:14.8px;font-weight:700;font-family:inherit;cursor:pointer;
+  .tab-actions{margin-left:auto;display:flex;gap:8px;align-self:center}
+  .printbtn-top{align-self:center;font-size:14.8px;font-weight:700;font-family:inherit;cursor:pointer;
     color:#fff;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.3);border-radius:9px;padding:8px 14px;margin-bottom:6px}
   .printbtn-top:hover{background:rgba(255,255,255,.26)}
 
@@ -256,8 +257,10 @@
       <button class="tab active" data-tab="course">교과목 CQI</button>
       <button class="tab" data-tab="major">전공교육과정 CQI</button>
       <button class="tab" data-tab="summary">연도별 종합 요약</button>
-      <button class="printbtn-top" onclick="window.print()">🖨️ 이 화면 PDF/인쇄</button>
-      <button class="printbtn-top" id="deptLinksBtn" onclick="toggleDeptLinks()">🏫 학과별 링크</button>
+      <div class="tab-actions">
+        <button class="printbtn-top" onclick="window.print()">🖨️ 이 화면 PDF/인쇄</button>
+        <button class="printbtn-top" id="deptLinksBtn" onclick="toggleDeptLinks()">🏫 학과별 링크</button>
+      </div>
     </div>
   </div>
 </header>
